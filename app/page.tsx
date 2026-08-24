@@ -245,8 +245,19 @@ export default function Home() {
         )}
 
         {/* Footer */}
-        <footer className="text-center mt-12 text-slate-400 dark:text-slate-500 text-xs">
-          Made with ❤️ for LinkedIn creators
+        <footer className="text-center mt-12 space-y-3">
+          <a
+            href="https://buymeacoffee.com/linkedpost"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-semibold px-4 py-2 rounded-full transition-all duration-200 hover:scale-105 text-sm"
+          >
+            <span>☕</span>
+            Buy me a coffee
+          </a>
+          <p className="text-slate-400 dark:text-slate-500 text-xs">
+            LinkedPost © 2026 · Your content is never stored
+          </p>
         </footer>
       </div>
     </main>
