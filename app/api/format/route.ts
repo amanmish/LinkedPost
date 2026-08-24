@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { formatWithOpenAI } from "@/lib/openai";
+import { formatContent } from "@/lib/ai-formatter";
 import { convertMarkdownToUnicode } from "@/lib/unicode";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -41,8 +41,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get formatted content from OpenAI
-    const formatted = await formatWithOpenAI(content, customInstructions);
+    // Get formatted content (OpenAI primary, Groq fallback)
+    const formatted = await formatContent(content, customInstructions);
 
     // Convert markdown bold/italic to Unicode characters
     const unicodeFormatted = convertMarkdownToUnicode(formatted);
