@@ -1,9 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { formatWithOpenAI } from "@/lib/openai";
 import { convertMarkdownToUnicode } from "@/lib/unicode";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    // Get client IP for rate limiting
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+      || request.headers.get("x-real-ip")
+      || "unknown";
+
+    // Check rate limit
+    const rateLimit = checkRateLimit(ip);
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: `Too many requests. Try again in ${rateLimit.resetIn} seconds.` },
+        {
+          status: 429,
+          headers: {
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": rateLimit.resetIn.toString(),
+          }
+        }
+      );
+    }
+
     const { content, customInstructions } = await request.json();
 
     if (!content || typeof content !== "string") {
