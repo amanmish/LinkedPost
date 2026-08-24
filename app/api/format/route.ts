@@ -1,0 +1,42 @@
+import { NextRequest, NextResponse } from "next/server";
+import { formatWithOpenAI } from "@/lib/openai";
+import { convertMarkdownToUnicode } from "@/lib/unicode";
+
+export async function POST(request: NextRequest) {
+  try {
+    const { content, customInstructions } = await request.json();
+
+    if (!content || typeof content !== "string") {
+      return NextResponse.json(
+        { error: "Content is required" },
+        { status: 400 }
+      );
+    }
+
+    if (content.length > 10000) {
+      return NextResponse.json(
+        { error: "Content too long (max 10000 characters)" },
+        { status: 400 }
+      );
+    }
+
+    // Get formatted content from OpenAI
+    const formatted = await formatWithOpenAI(content, customInstructions);
+
+    // Convert markdown bold/italic to Unicode characters
+    const unicodeFormatted = convertMarkdownToUnicode(formatted);
+
+    return NextResponse.json({
+      formatted: unicodeFormatted,
+      charCount: unicodeFormatted.length,
+      isOverLimit: unicodeFormatted.length > 3000,
+    });
+  } catch (error) {
+    console.error("Format error:", error);
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json(
+      { error: `Failed to format content: ${errorMessage}` },
+      { status: 500 }
+    );
+  }
+}
