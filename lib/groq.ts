@@ -31,6 +31,10 @@ DO NOT:
 - Make it sound generic or salesy
 - Use corporate jargon
 - Over-emoji (keep it professional)
+- Use code blocks (\`\`\`) or inline code formatting - LinkedIn doesn't support it
+- Use separators like "---", "___", or "***"
+
+For code, APIs, or technical content, write it as plain text without special formatting.
 
 Respond ONLY with the formatted post, nothing else.`;
 

@@ -35,5 +35,37 @@ export function convertMarkdownToUnicode(text: string): string {
   let result = text.replace(/\*\*([^*]+)\*\*/g, (_, content) => toBold(content));
   // Then convert italic (* *)
   result = result.replace(/\*([^*]+)\*/g, (_, content) => toItalic(content));
+
+  // Clean up unwanted formatting that LinkedIn doesn't support
+  result = cleanupForLinkedIn(result);
+
+  return result;
+}
+
+// Remove formatting that doesn't work on LinkedIn
+export function cleanupForLinkedIn(text: string): string {
+  let result = text;
+
+  // Remove horizontal separators (---, ___, ***)
+  result = result.replace(/^[-_*]{3,}$/gm, '');
+
+  // Remove code blocks (``` ... ```)
+  result = result.replace(/```[\s\S]*?```/g, (match) => {
+    // Extract content inside code block and return as plain text
+    return match.replace(/```/g, '').trim();
+  });
+
+  // Remove inline backticks but keep the content
+  result = result.replace(/`([^`]+)`/g, '$1');
+
+  // Clean up multiple blank lines (more than 2) to just 2
+  result = result.replace(/\n{3,}/g, '\n\n');
+
+  // Remove leading/trailing whitespace from lines
+  result = result.split('\n').map(line => line.trim()).join('\n');
+
+  // Remove empty lines at start and end
+  result = result.trim();
+
   return result;
 }
